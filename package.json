@@ -1,0 +1,11 @@
+{
+  "name": "resume-site",
+  "version": "1.0.0",
+  "description": "Simple resume static web app server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Alex Morgan",
+  "license": "ISC"
+}

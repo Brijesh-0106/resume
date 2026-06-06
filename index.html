@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional Resume of Brijesh Shah - Software Engineer">
+    <title>Brijesh Shah | Resume</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Configurable Links Section (Easy to edit) -->
+    <script>
+        // ==========================================
+        // EDIT YOUR LINKS HERE
+        // These will automatically update everywhere on the site!
+        // ==========================================
+        const RESUME_CONFIG = {
+            portfolio: "https://brijesh-info-io.vercel.app/", // Update with your actual portfolio link
+        };
+    </script>
+
+    <!-- Top Action & Navigation Bar -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <h1 class="nav-name">Brijesh Shah</h1>
+        </div>
+
+        <div class="nav-actions">
+            <a data-link-type="portfolio" href="#" target="_blank" class="download-btn">
+                <span>Portfolio</span>
+                <span class="arrow">↗</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="viewer-container">
+        <!-- Interactive Canvas Wrapper -->
+        <div class="canvas-wrapper" id="canvas-wrapper">
+            <div class="resume-canvas" id="resume-canvas">
+                <!-- Main Resume Image -->
+                <img src="Brijesh_Shah_Resume_final_page-0001.jpg" alt="Brijesh Shah Resume" class="resume-img"
+                    draggable="false">
+
+                <!-- Interactive Invisible CSS Overlays (Positioned using Percentages) -->
+                <a data-link-type="portfolio" href="#" target="_blank" class="overlay-link"
+                    style="top: 8.0%; left: 72.2%; width: 6.4%; height: 2.2%;" title="Portfolio Website"></a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Hint Overlay -->
+    <div class="mobile-hint">
+        💡 Tap/pinch to zoom and drag to pan the resume image.
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Apply Configuration to Links
+            document.querySelectorAll("[data-link-type]").forEach(el => {
+                const type = el.getAttribute("data-link-type");
+                if (RESUME_CONFIG[type]) {
+                    if (type === 'email') {
+                        el.href = `mailto:${RESUME_CONFIG[type]}`;
+                    } else if (type === 'phone') {
+                        el.href = `tel:${RESUME_CONFIG[type]}`;
+                    } else {
+                        el.href = RESUME_CONFIG[type];
+                    }
+                }
+            });
+
+            // Pan and Zoom Functionality
+            const canvasWrapper = document.getElementById("canvas-wrapper");
+            const resumeCanvas = document.getElementById("resume-canvas");
+            const zoomInBtn = document.getElementById("zoom-in-btn");
+            const zoomOutBtn = document.getElementById("zoom-out-btn");
+            const zoomResetBtn = document.getElementById("zoom-reset-btn");
+            const zoomVal = document.getElementById("zoom-val");
+
+            let scale = 1.0;
+            const minScale = 0.5;
+            const maxScale = 3.0;
+            const step = 0.15;
+
+            // Pan variables
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+            let translateX = 0;
+            let translateY = 0;
+
+            function updateTransform() {
+                resumeCanvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                if (zoomVal) {
+                    zoomVal.textContent = `${Math.round(scale * 100)}%`;
+                }
+            }
+
+            // Zoom Handlers
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener("click", () => {
+                    if (scale < maxScale) {
+                        scale = Math.min(maxScale, scale + step);
+                        updateTransform();
+                    }
+                });
+            }
+
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener("click", () => {
+                    if (scale > minScale) {
+                        scale = Math.max(minScale, scale - step);
+                        updateTransform();
+                    }
+                });
+            }
+
+            if (zoomResetBtn) {
+                zoomResetBtn.addEventListener("click", () => {
+                    scale = 1.0;
+                    translateX = 0;
+                    translateY = 0;
+                    updateTransform();
+                });
+            }
+
+            // Mouse wheel zoom (Only when Ctrl key is pressed)
+            canvasWrapper.addEventListener("wheel", (e) => {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? -step : step;
+                    scale = Math.max(minScale, Math.min(maxScale, scale + delta));
+                    updateTransform();
+                }
+            }, { passive: false });
+
+            // Panning Handlers (Only active when zoomed in)
+            canvasWrapper.addEventListener("mousedown", (e) => {
+                if (scale <= 1.0) return; // Allow normal scrolling / text interaction if not zoomed
+                if (e.target.closest("a")) return;
+
+                isDragging = true;
+                canvasWrapper.classList.add("grabbing");
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+            });
+
+            window.addEventListener("mousemove", (e) => {
+                if (!isDragging) return;
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                updateTransform();
+            });
+
+            window.addEventListener("mouseup", () => {
+                isDragging = false;
+                canvasWrapper.classList.remove("grabbing");
+            });
+
+            // Touch Panning (Only active when zoomed in)
+            let touchStartDist = 0;
+            canvasWrapper.addEventListener("touchstart", (e) => {
+                if (scale <= 1.0) return; // Allow native touch scrolling if not zoomed in
+
+                if (e.touches.length === 1) {
+                    if (e.target.closest("a")) return;
+                    isDragging = true;
+                    startX = e.touches[0].clientX - translateX;
+                    startY = e.touches[0].clientY - translateY;
+                } else if (e.touches.length === 2) {
+                    isDragging = false;
+                    touchStartDist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                }
+            });
+
+            canvasWrapper.addEventListener("touchmove", (e) => {
+                if (scale <= 1.0) return; // Allow native touch scrolling if not zoomed in
+
+                if (isDragging && e.touches.length === 1) {
+                    e.preventDefault(); // Stop native scrolling only when actively panning
+                    translateX = e.touches[0].clientX - startX;
+                    translateY = e.touches[0].clientY - startY;
+                    updateTransform();
+                } else if (e.touches.length === 2) {
+                    e.preventDefault(); // Stop native scrolling
+                    const dist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    const factor = dist / touchStartDist;
+                    touchStartDist = dist;
+                    scale = Math.max(minScale, Math.min(maxScale, scale * factor));
+                    updateTransform();
+                }
+            });
+
+            canvasWrapper.addEventListener("touchend", () => {
+                isDragging = false;
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 
 const MIME_TYPES = {
     '.html': 'text/html',
@@ -19,11 +19,11 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
     // Resolve file path
     let filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
-    
+
     // Get extension
     const extname = path.extname(filePath);
     let contentType = MIME_TYPES[extname] || 'application/octet-stream';
-    
+
     // Read and serve file
     fs.readFile(filePath, (error, content) => {
         if (error) {

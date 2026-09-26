@@ -36,7 +36,6 @@ jobs:
             sudo docker pull brijesh408/resume:v${{github.run_number}}
             sudo docker stop resume || true
             sudo docker rm resume || true
-            sudo docker rmi brijesh408/resume:v${{github.run_number - 1}}
             sudo docker run -d --name resume -p 3001:80 brijesh408/resume:v${{github.run_number}} 
             sleep 5
             docker ps

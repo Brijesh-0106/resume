@@ -18,7 +18,7 @@ jobs:
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: docker push
         run: |
-          docker build -t brijesh408/resume:v${{github.run_number}}
+          docker build -t brijesh408/resume:v${{github.run_number}} .
           docker push brijesh408/resume:v${{github.run_number}}
 
   deploy:
